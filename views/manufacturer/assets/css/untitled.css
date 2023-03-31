@@ -1,0 +1,47 @@
+#apply_button {
+  padding: 10px;
+}
+
+#upload-application-form {
+  padding: 10px;
+}
+
+#duration {
+  padding: 10px;
+  padding-left: 0px;
+}
+
+#upload-application-form-1 {
+  padding: 10px;
+  padding-left: 0px;
+}
+
+#inner-div-nav-element {
+  background-color: var(--bs-gray-600);
+  color: white;
+  border-radius: 8px;
+}
+
+#outer-div-nav-item {
+  padding-right: 10px;
+}
+
+#outer-div-nav-item {
+  background-color: 828697;
+  padding-left: 10px;
+}
+
+#outer-div-nav-element {
+  padding-right: 10px;
+}
+
+#outer-div-nav-item {
+}
+
+div {
+}
+
+#proceed-button {
+  padding: 10px;
+}
+

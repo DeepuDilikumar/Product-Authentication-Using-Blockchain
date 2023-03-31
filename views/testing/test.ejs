@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>QR Code Scanner Example</title>
+    <style>
+      #video {
+        width: 640px;
+        height: 480px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>QR Code Scanner Example</h1>
+    <video id="video" width = "640" heigth = "480" autoplay></video>
+    <div id="result"></div>
+    <script src="https://rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
+    <script src="https://rawgit.com/nimiq/qr-scanner/master/qr-scanner.min.js"></script>
+    <script>
+      const video = document.getElementById('video');
+      const resultDiv = document.getElementById('result');
+      const scanner = new QrScanner(video, (result) => {
+        // Send the scanned data to the server
+        fetch('/scanned', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: result }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            // Display the server's response
+            resultDiv.textContent = data.message;
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      });
+
+      // Start the scanner when the video stream is ready
+      video.addEventListener('canplay', () => {
+        scanner.start();
+      });
+
+      // Stop the scanner and video stream when the window is closed
+      window.addEventListener('beforeunload', () => {
+        scanner.stop();
+        video.srcObject.getTracks().forEach((track) => track.stop());
+      });
+    </script>
+  </body>
+</html>

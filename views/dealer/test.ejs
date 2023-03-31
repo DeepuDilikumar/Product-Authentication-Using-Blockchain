@@ -1,0 +1,72 @@
+
+<!--
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>QR Code Scanner</title>
+    <script src="https://cdn.jsdelivr.net/npm/qr-scanner"></script>
+  </head>
+  <body>
+    <h1>QR Code Scanner</h1>
+    <video id="video" width="400" height="300"></video>
+    <script>
+      const videoElement = document.getElementById('video');
+      const qrScanner = new QrScanner(videoElement, result => {
+        console.log(result);
+      });
+      qrScanner.start();
+    </script>
+  </body>
+</html>
+
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QR Code Reader</title>
+</head>
+<body>
+  <video id="video" width="640" height="480" autoplay></video>
+  
+  <script src="../../node_modules/jsqr/dist/jsQR.js">
+  const video = document.getElementById('video');
+
+    // request access to camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        video.srcObject = stream;
+      });
+
+    // read QR code from video
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let interval_id;
+
+    function checking_qrcode() {
+        console.log('Checking for QR Code');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        console.log(imageData);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+        if (code) {
+          console.log('QR Code found!');
+          const message = code.data;
+          fetch('http://localhost:8000/dealer/scan_qrcode', {
+            method: 'POST',
+            body: JSON.stringify({ message }),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          clearInterval(interval_id);
+        }
+    }
+
+    interval_id = setInterval(checking_qrcode, 1000)
+  </script>
+</body>
+</html>

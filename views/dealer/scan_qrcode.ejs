@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>QR Code Scanner</title>
+  </head>
+  <body>
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <script src="https://rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
+    <script src="https://rawgit.com/nimiq/qr-scanner/master/qr-scanner.min.js"></script>
+
+    <pre>
+      <center>Dealer Portal</center>
+      <br>
+      Place the QR code of the product in view of the camera below:
+      
+    </pre>
+ 
+    <script>
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(function (stream) {
+            video.srcObject = stream;
+          })
+          .catch(function (error) {
+            console.log('Error accessing camera: ', error);
+          });
+      }
+
+      let interval_id;
+      let check_qrcode = function () {
+
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+        if (code) {
+          console.log('QR Code:', code.data);
+          // Here you can send the data to the backend using an HTTP request
+          const data = { 'qrCode': code.data };
+          fetch('../dealer/scan_qrcode', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+            
+          })
+            .then(response => response)
+            .then(data => {
+              console.log('Response:', data);
+              clearInterval(interval_id);
+              console.log('Interval cleared')
+              
+            })
+            .catch(error => {
+              console.log('Error:', error);
+            });
+          }
+
+      }
+
+      video.addEventListener('play', function () {
+        interval_id = setInterval(check_qrcode, 100);
+      });
+    </script>
+  </body>
+</html>

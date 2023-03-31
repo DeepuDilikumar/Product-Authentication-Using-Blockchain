@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate QR Code</title>
+</head>
+<body>
+
+    <script>alert('Product added successfully!');</script>
+    <br>
+    <br>
+    <pre>
+    <!-- This is the image that we want to download -->
+    <center>
+            QR code of the added product is shown below:
+            (Download the QR code to paste on the product box)
+
+     <img id="my-image" src="<%= qrcode %>" alt="My Image">
+
+    <!-- This is the download button -->
+    <button><a href="#" download= '<%= image_name %>'>Download Image</a></button>
+    </center>
+
+    <!-- This is the JavaScript that sets the download URL -->
+
+    </pre>
+    <script>
+        const downloadBtn = document.querySelector('a[download]');
+        const myImage = document.getElementById('my-image');
+        const dataUrl = myImage.src.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+        downloadBtn.href = dataUrl;
+    </script>
+</body>
+</html>
